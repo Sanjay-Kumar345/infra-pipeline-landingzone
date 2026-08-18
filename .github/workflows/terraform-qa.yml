@@ -11,7 +11,7 @@ jobs:
   terraform:
     name: Terraform QA
 
-    runs-on: SANJAY_TANWAR45
+    runs-on: self-hosted
 
     env:
      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
