@@ -1,0 +1,35 @@
+name: Terraform QA Pipeline
+
+on:
+ push:
+   branches:
+     - main
+
+ workflow_dispatch:
+ 
+jobs:
+  terraform:
+    name: Terraform QA
+
+    runs-on: SANJAY_TANWAR45
+
+    defaults:
+      run:
+       working-directory: Environment/QA
+    steps: 
+     - name: checkout Repository
+       uses: action@checkout@4
+
+     - name: check terraform version 
+       run: terraform version 
+
+     - name: initialize provider via terraform initialize
+       run: terraform initialize
+
+     - name: terraform validate to check the syntax error
+       run: terraform validate 
+       
+     - name: terraform plan to show the infra 
+       run: terraform plan 
+
+    
