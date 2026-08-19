@@ -1,6 +1,6 @@
 rg-name = {
   rg1 = {
-    name       = "acs-resource"
+    name       = "test-rg"
     location   = "east us"
     managed_by = "Infra-Team"
     tags = {
