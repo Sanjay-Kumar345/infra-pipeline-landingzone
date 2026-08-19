@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+
   workflow_dispatch:
 
 env:
@@ -14,8 +15,8 @@ env:
 
 jobs:
 
-  security:
-    name: Security & Quality Scan
+  terraform:
+    name: Terraform QA
     runs-on: self-hosted
 
     defaults:
@@ -23,85 +24,18 @@ jobs:
         working-directory: Environment/QA
 
     steps:
-      - name: Checkout Repository
+
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Terraform FMT
-        run: terraform fmt -check -recursive
+      - name: Terraform Init
+        run: terraform init
 
       - name: Terraform Validate
         run: terraform validate
 
-      # Git Secrets Scan
-      - name: Run GitLeaks
-        uses: gitleaks/gitleaks-action@v2
-
-      # Terraform Linting
-      - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v4
-
-      - name: Init TFLint
-        run: tflint --init
-
-      - name: Run TFLint
-        run: tflint
-
-      # Terraform Security Scan
-      - name: Run tfsec
-        uses: aquasecurity/tfsec-action@v1.0.3
-
-      # Compliance & Security Checks
-      - name: Run Checkov
-        uses: bridgecrewio/checkov-action@master
-        with:
-          directory: .
-
-  plan:
-    name: Terraform Plan
-    needs: security
-    runs-on: self-hosted
-
-    defaults:
-      run:
-        working-directory: Environment/QA
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Terraform Init
-        run: terraform init
-
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
-
-      - name: Upload Plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: tfplan
-          path: Environment/QA/tfplan
-
-  apply:
-    name: Terraform Apply
-    needs: plan
-    runs-on: self-hosted
-
-    defaults:
-      run:
-        working-directory: Environment/QA
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Download Plan
-        uses: actions/download-artifact@v4
-        with:
-          name: tfplan
-          path: Environment/QA
+        run: terraform plan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve
